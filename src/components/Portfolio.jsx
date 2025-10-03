@@ -202,8 +202,13 @@ export default function Portfolio() {
                 <ProjectCard
                   key={p.id}
                   {...p}
-                  onViewScreenshots={(screenshots) =>
-                    setModalData({ isOpen: true, screenshots, index: 0 })
+                  onViewScreenshots={(id, index) =>
+                    setModalData({ 
+                      isOpen: true, 
+                      screenshots: p.screenshots, // galing sa project data
+                      index, 
+                      projectId: id // para sa layoutId zoom
+                    })
                   }
                 />
               ))}
@@ -213,6 +218,14 @@ export default function Portfolio() {
             <ScreenshotModal
               screenshots={modalData.screenshots}
               isOpen={modalData.isOpen}
+              index={modalData.index}   // ✅ must be `index`, not `currentIndex`
+              setIndex={(updater) =>
+                setModalData((prev) => ({
+                  ...prev,
+                  index: typeof updater === "function" ? updater(prev.index) : updater
+                }))
+              }
+              originRect={modalData.originRect}
               onClose={() => setModalData({ ...modalData, isOpen: false })}
             />
           </section>

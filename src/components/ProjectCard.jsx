@@ -1,14 +1,22 @@
-import { useState } from "react";
-import ScreenshotModal from "./ScreenshotModal";
+import { useState, useRef } from "react";
 
-export default function ProjectCard({ title, tags, description, link, screenshot, screenshots, onViewScreenshots}) {
+export default function ProjectCard({
+  title,
+  tags,
+  description,
+  link,
+  screenshot,
+  screenshots,
+  onViewScreenshots,
+}) {
   const [flipped, setFlipped] = useState(false);
-  const [isModalOpen, setIsModalOpen] = useState(false);
+  const cardRef = useRef(null);
 
   return (
     <div
       className="w-full h-64 perspective cursor-pointer"
       onClick={() => setFlipped(!flipped)}
+      ref={cardRef}
     >
       <div className={`flip-card-inner ${flipped ? "flipped" : ""}`}>
         {/* Front */}
@@ -45,17 +53,20 @@ export default function ProjectCard({ title, tags, description, link, screenshot
             View live
           </a>
 
-        <button
+          <button
             className="text-black font-semibold underline"
             onClick={(e) => {
                 e.stopPropagation();
-                console.log("Opening modal with screenshots:", screenshots);
-                onViewScreenshots(screenshots); // trigger modal in parent
+                const rect = e.currentTarget.getBoundingClientRect(); // get bounding box
+                onViewScreenshots({
+                screenshots,
+                index: 0,
+                originRect: rect,
+                });
             }}
-        >
+            >
             View screenshots
-        </button>
-
+            </button>
         </div>
       </div>
     </div>
